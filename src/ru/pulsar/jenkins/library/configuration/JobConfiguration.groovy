@@ -1,7 +1,6 @@
 package ru.pulsar.jenkins.library.configuration
 
 import com.cloudbees.groovy.cps.NonCPS
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
@@ -53,6 +52,10 @@ class JobConfiguration implements Serializable {
     @JsonPropertyDescription("Конфигурация библиотеки logos. Применяется перед запуском каждой стадии сборки")
     String logosConfig;
 
+    @JsonProperty("stageTimeout")
+    @JsonPropertyDescription("Таймаут для выполнения шагов (в часах)")
+    Integer stageTimeout;
+
     @Override
     @NonCPS
     String toString() {
@@ -69,6 +72,7 @@ class JobConfiguration implements Serializable {
             ", syntaxCheckOptions=" + syntaxCheckOptions +
             ", resultsTransformOptions=" + resultsTransformOptions +
             ", logosConfig=" + logosConfig +
+            ", stageTimeout=" + stageTimeout +
             '}';
     }
 

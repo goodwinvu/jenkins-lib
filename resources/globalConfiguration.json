@@ -5,6 +5,7 @@
   "srcDir": "src/cf",
   "srcExtDir": "src/ext",
   "ringMemory": "4g",
+  "basePath": "",
   "sourceFormat": "designer",
   "defaultBranch": "main",
   "secrets": {
@@ -40,7 +41,8 @@
     "initMethod": "fromStorage",
     "runMigration": true,
     "saveXMLartifacts": false,
-    "additionalInitializationSteps": []
+    "additionalInitializationSteps": [],
+    "vrunnerSettings": "./tools/vrunner.json"
   },
   "bdd": {
     "vrunnerSteps": [

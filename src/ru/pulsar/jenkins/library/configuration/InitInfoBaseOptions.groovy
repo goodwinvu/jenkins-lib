@@ -28,6 +28,11 @@ class InitInfoBaseOptions implements Serializable {
     """)
     String[] additionalInitializationSteps
 
+    @JsonPropertyDescription("""Путь к конфигурационному файлу vanessa-runner.
+    По умолчанию содержит значение "./tools/vrunner.json".
+    """)
+    String vrunnerSettings
+
     @Override
     @NonCPS
     String toString() {
@@ -36,6 +41,7 @@ class InitInfoBaseOptions implements Serializable {
             ", runMigration=" + runMigration +
             ", saveXMLartifacts=" + saveXMLartifacts +
             ", additionalInitializationSteps=" + additionalInitializationSteps +
+            ", vrunnerSettings=" + vrunnerSettings +
             '}';
     }
 }

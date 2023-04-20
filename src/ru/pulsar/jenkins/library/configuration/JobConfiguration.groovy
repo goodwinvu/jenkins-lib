@@ -23,6 +23,8 @@ class JobConfiguration implements Serializable {
     
     @JsonPropertyDescription("Объем памяти используемый утилитой ring при конвертации из формата EDT, по умолчанию, 4g")
     String ringMemory
+    @JsonPropertyDescription("Путь к базе для выполнения тестов")
+    String basePath
 
     @JsonPropertyDescription("Формат исходников конфигурации")
     SourceFormat sourceFormat;
@@ -82,6 +84,7 @@ class JobConfiguration implements Serializable {
             ", srcDir='" + srcDir + '\'' +
             ", srcExtDir='" + srcExtDir + '\'' +
             ", ringMemory='" + ringMemory + '\'' +
+            ", basePath='" + basePath + '\'' +
             ", sourceFormat=" + sourceFormat +
             ", stageFlags=" + stageFlags +
             ", timeoutOptions=" + timeoutOptions +
@@ -118,5 +121,14 @@ class JobConfiguration implements Serializable {
             edtVersionForRing += "@" + edtVersion
         }
         return edtVersionForRing
+    }
+
+    String baseName(){
+        String base = basePath
+        if (basePath == '') {
+            base = "/F./build.ib"
+        }
+
+        return base
     }
 }

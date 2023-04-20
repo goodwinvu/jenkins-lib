@@ -22,6 +22,10 @@
       "type" : "string",
       "description" : "Объем памяти используемый утилитой ring при конвертации из формата EDT, по умолчанию, 4g"
     },
+    "basePath" : {
+      "type" : "string",
+      "description" : "Путь к базе для выполнения тестов"
+    },
     "sourceFormat" : {
       "type" : "string",
       "description" : "Формат исходников конфигурации",
@@ -168,6 +172,10 @@
           "items" : {
             "type" : "string"
           }
+        },
+        "vrunnerSettings" : {
+          "type" : "string",
+          "description" : "Путь к конфигурационному файлу vanessa-runner.\n    По умолчанию содержит значение \"./tools/vrunner.json\".\n    "
         }
       }
     },

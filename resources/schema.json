@@ -46,6 +46,10 @@
         }
       }
     },
+    "saveCFtoArtifacts": {
+      "type": "boolean",
+      "description": "Сохранение конфигурации (cf и cfe) в артефакты сборки"
+    },
     "stages": {
       "type": "object",
       "id": "urn:jsonschema:ru:pulsar:jenkins:library:configuration:StageFlags",
@@ -74,6 +78,10 @@
         "bdd": {
           "type": "boolean",
           "description": "Запуск BDD сценариев включен"
+        },
+        "yaxunit" : {
+          "type" : "boolean",
+          "description" : "Юнит тесты"
         },
         "email": {
           "type": "boolean",
@@ -133,6 +141,10 @@
         "syntaxCheck": {
           "type": "integer",
           "description": "Таймаут шага синтаксического контроля, в минутах.\n    По умолчанию содержит значение 240.\n    "
+        },
+        "yaxunit" : {
+          "type" : "integer",
+          "description" : "Таймаут шага модульных тестов YAXUnit, в минутах.\n    По умолчанию содержит значение 60.\n    "
         },
         "smoke": {
           "type": "integer",

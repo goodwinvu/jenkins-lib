@@ -11,6 +11,7 @@
     "telegramBotToken": "UNKNOWN_ID",
     "telegramChatId": "UNKNOWN_ID"
   },
+  "saveCFtoArtifacts": false,
   "stages": {
     "initSteps": false,
     "sonarqube": false,
@@ -19,6 +20,7 @@
     "edtValidate": false,
     "smoke": false,
     "email": false,
+    "yaxunit": false,
     "telegram": false
   },
   "timeout": {
@@ -32,6 +34,7 @@
     "initInfoBase": 60,
     "loadExtensions": 60,
     "resultTransformation": 10,
+    "yaxunit": 240,
     "sonarqube": 90,
     "syntaxCheck": 240,
     "zipInfoBase": 60
@@ -79,6 +82,9 @@
     "xddConfigPath": "./tools/xUnitParams.json",
     "publishToAllureReport": false,
     "publishToJUnitReport": true
+  },
+  "yaxunit": {
+    "vrunnerSettings": "./tools/vrunner.json"
   },
   "resultsTransform": {
     "removeSupport": true,

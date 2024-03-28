@@ -23,6 +23,8 @@ void call() {
 
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
+            gitLabConnection('GitLabServer')
+            copyArtifactPermission('*')
             timestamps()
         }
 
@@ -38,6 +40,7 @@ void call() {
 
                 steps {
                     script {
+                        updateGitlabCommitStatus name: 'build', state: 'running'
                         config = jobConfiguration() as JobConfiguration
                         agent1C = config.v8AgentLabel()
                         agentEdt = config.edtAgentLabel()
@@ -137,6 +140,14 @@ void call() {
                                                 printLocation()
 
                                                 zipInfobase()
+                                                
+                                                script {
+                                                    if (config.saveCFtoArtifacts) {
+                                                        steps.archiveArtifacts('build/out/*.cf')
+                                                        steps.archiveArtifacts('build/out/cfe/*.cfe')
+                                                    }
+                                                }
+
                                             }
                                         }
                                     }
@@ -243,6 +254,23 @@ void call() {
                             }
                         }
                     }
+
+                    stage('Юнит тесты') {
+                        agent {
+                            label agent1C
+                        }
+                        when {
+                            beforeAgent true
+                            expression { config.stageFlags.yaxunit }
+                        }
+                        steps {
+                            timeout(time: config.timeoutOptions.smoke, unit: TimeUnit.MINUTES) {
+                                unzipInfobase()
+
+                                yaxunit config
+                            }
+                        }
+                    }
                 }
             }
 
@@ -263,6 +291,15 @@ void call() {
         }
 
         post('post-stage') {
+            failure {
+                updateGitlabCommitStatus name: 'build', state: 'failed'
+            }
+            success {
+                updateGitlabCommitStatus name: 'build', state: 'success'
+            }
+            aborted {
+                updateGitlabCommitStatus name: 'build', state: 'canceled'
+            }
             always {
                 node('agent') {
                     saveResults config

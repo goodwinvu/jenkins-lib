@@ -35,10 +35,13 @@ class JobConfiguration implements Serializable {
     @JsonPropertyDescription("Идентификаторы сохраненных секретов")
     Secrets secrets;
 
+    @JsonPropertyDescription("Сохранение конфигурации ИБ (cf и cft) в артефакты сборки")
+    Boolean saveCFtoArtifacts;
+
     @JsonProperty("initInfobase")
     @JsonPropertyDescription("Настройки шага инициализации ИБ")
     InitInfoBaseOptions initInfoBaseOptions;
-
+    
     @JsonProperty("bdd")
     @JsonPropertyDescription("Настройки шага запуска BDD сценариев")
     BddOptions bddOptions;
@@ -54,6 +57,10 @@ class JobConfiguration implements Serializable {
     @JsonProperty("smoke")
     @JsonPropertyDescription("Настройки дымового тестирования")
     SmokeTestOptions smokeTestOptions;
+
+    @JsonProperty("yaxunit")
+    @JsonPropertyDescription("Настройки юнит тестирования")
+    YaxunitOptions yaxunitOptions;
 
     @JsonProperty("resultsTransform")
     @JsonPropertyDescription("Настройки трансформации результатов анализа")
@@ -79,11 +86,13 @@ class JobConfiguration implements Serializable {
             ", timeoutOptions=" + timeoutOptions +
             ", defaultBranch='" + defaultBranch + '\'' +
             ", secrets=" + secrets +
+            ", saveCFtoArtifacts=" + saveCFtoArtifacts +
             ", initInfoBaseOptions=" + initInfoBaseOptions +
             ", bddOptions=" + bddOptions +
             ", sonarQubeOptions=" + sonarQubeOptions +
             ", syntaxCheckOptions=" + syntaxCheckOptions +
             ", smokeTestOptions=" + smokeTestOptions +
+            ", yaxunitoptions=" + yaxunitOptions +
             ", resultsTransformOptions=" + resultsTransformOptions +
             ", notificationOptions=" + notificationsOptions +
             ", logosConfig='" + logosConfig + '\'' +

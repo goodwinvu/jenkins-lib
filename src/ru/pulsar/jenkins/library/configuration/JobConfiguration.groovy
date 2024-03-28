@@ -58,7 +58,7 @@ class JobConfiguration implements Serializable {
     @JsonPropertyDescription("Настройки дымового тестирования")
     SmokeTestOptions smokeTestOptions;
 
-    @JsonProperty("yaxunit")
+    @JsonProperty("yaxunitoptions")
     @JsonPropertyDescription("Настройки юнит тестирования")
     YaxunitOptions yaxunitOptions;
 

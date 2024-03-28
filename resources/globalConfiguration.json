@@ -83,7 +83,7 @@
     "publishToAllureReport": false,
     "publishToJUnitReport": true
   },
-  "yaxunit": {
+  "yaxunitoptions": {
     "vrunnerSettings": "./tools/vrunner.json"
   },
   "resultsTransform": {

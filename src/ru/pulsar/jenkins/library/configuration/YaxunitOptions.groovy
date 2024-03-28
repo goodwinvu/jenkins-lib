@@ -15,9 +15,8 @@ class YaxunitOptions implements Serializable {
     @Override
     @NonCPS
     String toString() {
-        return "YaxunitTestOptions{" +
+        return "yaxunitOptions{" +
             "vrunnerSettings='" + vrunnerSettings + '\'' +
-            ", configPath='" + configPath +
             '}'
     }
 }

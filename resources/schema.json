@@ -249,6 +249,17 @@
         }
       }
     },
+    "yaxunitoptions": {
+      "type": "object",
+      "id": "urn:jsonschema:ru:pulsar:jenkins:library:configuration:yaxunitoptions",
+      "description": "Настройки шага запуска модульно тестирования",
+      "properties": {
+        "vrunnerSettings": {
+          "type": "string",
+          "description": "Путь к конфигурационному файлу vanessa-runner.\n    По умолчанию содержит значение \"./tools/vrunner.json\".\n    "
+        }
+      }
+    },
     "syntaxCheck": {
       "type": "object",
       "id": "urn:jsonschema:ru:pulsar:jenkins:library:configuration:SyntaxCheckOptions",

@@ -36,7 +36,7 @@ class JobConfiguration implements Serializable {
     Secrets secrets;
 
     @JsonPropertyDescription("Сохранение конфигурации ИБ (cf и cft) в артефакты сборки")
-    Boolean saveCFtoArtifacts;
+    Boolean saveCFtoArtifacts
 
     @JsonProperty("initInfobase")
     @JsonPropertyDescription("Настройки шага инициализации ИБ")

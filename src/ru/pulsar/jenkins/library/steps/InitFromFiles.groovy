@@ -46,7 +46,8 @@ class InitFromFiles implements Serializable {
 
         if (config.saveCFtoArtifacts) {
             Logger.println("Подготовка cf для сохранения в артефакты сборки")
-            def compileExtCommand = "$vrunnerPath compile --src $srcDir --out $env.WORKSPACE/build/out/conf.cf --ibconnection \"/F./build/ib\""
+            def compileToCfCommand = "$vrunnerPath compile --src $srcDir --out $env.WORKSPACE/build/out/conf.cf --ibconnection \"/F./build/ib\""
+            VRunner.exec(compileToCfCommand)
         }
     }
 }

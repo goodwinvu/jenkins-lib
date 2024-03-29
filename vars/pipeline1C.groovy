@@ -143,8 +143,11 @@ void call() {
                                                 
                                                 script {
                                                     if (config.saveCFtoArtifacts) {
-                                                        steps.archiveArtifacts('build/out/conf.cf')
-                                                        steps.archiveArtifacts('build/out/cfe/*.cfe')
+                                                        steps.archiveArtifacts("build/out/conf.cf")
+                                                        
+                                                        config.initInfoBaseOptions.extensions.each {
+                                                            steps.archiveArtifacts("build/out/cfe/${it.name}.cfe")
+                                                        }
                                                     }
                                                 }
 

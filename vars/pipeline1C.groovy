@@ -143,7 +143,7 @@ void call() {
                                                 
                                                 script {
                                                     if (config.saveCFtoArtifacts) {
-                                                        steps.archiveArtifacts('build/out/*.cf')
+                                                        steps.archiveArtifacts('build/out/conf.cf')
                                                         steps.archiveArtifacts('build/out/cfe/*.cfe')
                                                     }
                                                 }

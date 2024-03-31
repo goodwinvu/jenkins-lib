@@ -29,7 +29,8 @@ class LoadExtensions implements Serializable {
                
         config.initInfoBaseOptions.extensions.each {
             Logger.println("Установим расширение ${it.name}")
-            loadExtension(it, vrunnerPath, steps, cfeDir)
+            //loadExtension(it, vrunnerPath, steps, cfeDir)
+            loadExtSimple(it, vrunnerPath, steps, cfeDir)
         }
     }
 
@@ -45,6 +46,21 @@ class LoadExtensions implements Serializable {
             executeParameter = '\\' + executeParameter
         }
         loadCommand += executeParameter
+        loadCommand += ' --ibconnection "/F./build/ib"'
+
+        List<String> logosConfig = ["LOGOS_CONFIG=$config.logosConfig"]
+        steps.withEnv(logosConfig) {
+            VRunner.exec(loadCommand)
+        }
+    }
+
+    private void loadExtSimple (Extension extension, String vrunnerPath, IStepExecutor steps, String cfeDir) {
+
+        String pathToExt = "$cfeDir/${extension.name}.cfe"
+        FilePath localPathToExt = FileUtils.getFilePath(pathToExt)
+
+        // Команда загрузки расширения
+        String loadCommand = vrunnerPath + " loadext --file=$localPathToExt --extension=${extension.name} --updatedb"
         loadCommand += ' --ibconnection "/F./build/ib"'
 
         List<String> logosConfig = ["LOGOS_CONFIG=$config.logosConfig"]

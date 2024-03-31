@@ -30,11 +30,9 @@ class InitFromFiles implements Serializable {
         Logger.println("Распаковка файлов")
 
         String srcDir;
-
+         def env = steps.env();    
         if (config.sourceFormat == SourceFormat.EDT) {
-            def env = steps.env();
             srcDir = "$env.WORKSPACE/$EdtToDesignerFormatTransformation.CONFIGURATION_DIR"
-
             steps.unstash(EdtToDesignerFormatTransformation.CONFIGURATION_ZIP_STASH)
             steps.unzip(srcDir, EdtToDesignerFormatTransformation.CONFIGURATION_ZIP)
         } else {
@@ -45,5 +43,11 @@ class InitFromFiles implements Serializable {
         String vrunnerPath = VRunner.getVRunnerPath();
         def initCommand = "$vrunnerPath init-dev --src $srcDir --ibconnection \"/F./build/ib\""
         VRunner.exec(initCommand)
+
+        if (config.saveCFtoArtifacts) {
+            Logger.println("Подготовка cf для сохранения в артефакты сборки")
+            def compileToCfCommand = "$vrunnerPath unload --ibconnection \"/F./build/ib\" $env.WORKSPACE/build/out/conf.cf"
+            VRunner.exec(compileToCfCommand)
+        }
     }
 }

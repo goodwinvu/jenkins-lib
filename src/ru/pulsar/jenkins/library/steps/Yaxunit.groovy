@@ -47,7 +47,7 @@ class Yaxunit implements Serializable {
         String junitReport = "build/out/jUnit/yaxunit/yaxunit.xml"
         FilePath pathToJUnitReport = FileUtils.getFilePath("$env.WORKSPACE/$junitReport")
         String junitReportDir = FileUtils.getLocalPath(pathToJUnitReport.getParent())
-        String configYaxunit = "test-config.json"
+        String configYaxunit = "./tools/yaxunit_settings.json"
         FilePath pathToConfig = FileUtils.getFilePath("$env.WORKSPACE/$configYaxunit")
 //        def data = [
 //                'filter' : 'test',

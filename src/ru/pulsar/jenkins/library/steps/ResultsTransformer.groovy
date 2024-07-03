@@ -39,7 +39,7 @@ class ResultsTransformer implements Serializable {
         def genericIssueFile = "$env.WORKSPACE/$RESULT_FILE"
 
         String srcDir = config.sourceFormat == SourceFormat.DESIGNER ? config.srcDir : Paths.get(config.srcDir, "src")
-        steps.cmd("stebi convert -r $edtValidateFile $genericIssueFile $srcDir")
+        steps.cmd("stebi convert -f Generic_Issue_10_3 -r $edtValidateFile $genericIssueFile $srcDir")
 
         if (config.resultsTransformOptions.removeSupport) {
             def supportLevel = config.resultsTransformOptions.supportLevel

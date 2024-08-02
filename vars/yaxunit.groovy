@@ -3,8 +3,10 @@ import ru.pulsar.jenkins.library.ioc.ContextRegistry
 import ru.pulsar.jenkins.library.steps.Yaxunit
 
 def call(JobConfiguration config) {
+
     ContextRegistry.registerDefaultContext(this)
 
-    def Yaxunit = new Yaxunit(config)
-    Yaxunit.run()
+    def yaxunit = new Yaxunit(config)
+    yaxunit.run()
+
 }

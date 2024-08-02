@@ -26,6 +26,8 @@ interface IStepExecutor {
 
     String readFile(String file, String encoding)
 
+    void writeFile(String file, String text, String encoding)
+
     boolean fileExists(String file)
 
     void echo(message)
@@ -69,6 +71,8 @@ interface IStepExecutor {
     def stash(String name, String includes, boolean allowEmpty)
 
     def unstash(String name)
+
+    def unstable(String message)
 
     def zip(String dir, String zipFile)
 

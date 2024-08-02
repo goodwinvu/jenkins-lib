@@ -8,13 +8,13 @@ import ru.pulsar.jenkins.library.utils.FileUtils
 import ru.pulsar.jenkins.library.utils.Logger
 import ru.pulsar.jenkins.library.utils.VRunner
 
-import java.nio.file.Files
-
 class Yaxunit implements Serializable {
 
     private final JobConfiguration config
 
-    private final String yaxunitPath = 'build/yaxunit.cfe'
+    private final String DEFAULT_YAXUNIT_CONFIGURATION_RESOURCE = 'yaxunit.json'
+
+    public static final String YAXUNIT_ALLURE_STASH = 'yaxunit-allure'
 
     Yaxunit(JobConfiguration config) {
         this.config = config
@@ -39,48 +39,51 @@ class Yaxunit implements Serializable {
         def env = steps.env()
 
         String vrunnerPath = VRunner.getVRunnerPath()
-        String ibConnection = "--ibconnection /F./build/ib"
+        String ibConnection = ' --ibconnection "/F./build/ib"'
 
-        // Создаем конфиг, т.к. в репо может быть ключ, который не закрывает программу и может повесить конвеер
-        // Также путь к отчету в формате junit указывается в конфиге, т.к. мы не знаем на чем стартует агент,
-        // поэтому собираем сами. Стоит вынести в отдельный класс
-        String junitReport = "build/out/jUnit/yaxunit/yaxunit.xml"
-        FilePath pathToJUnitReport = FileUtils.getFilePath("$env.WORKSPACE/$junitReport")
-        String junitReportDir = FileUtils.getLocalPath(pathToJUnitReport.getParent())
-        String configYaxunit = "./tools/yaxunit_settings.json"
-        FilePath pathToConfig = FileUtils.getFilePath("$env.WORKSPACE/$configYaxunit")
-//        def data = [
-//                'filter' : 'test',
-//                'reportPath' : 'ss'
-//        ]
-//        String data = "{\"filter\": {\"extensions\": [\"test\"]}, \"reportPath\": \"$pathToConfig\"}"
-//        def json = new groovy.json.JsonBuilder()
-//        json "filter" : "jj", "reportPath" : "ii"
-//        def file = new File("$env.WORKSPACE\\$configYaxunit")
-//        file.createNewFile()
-//        file.write(groovy.json.JsonOutput.prettyPrint(json.toString()))
+        // Готовим конфиг для yaxunit
+        String yaxunitConfigPath = options.configPath
+        if (!steps.fileExists(yaxunitConfigPath)) {
+            def defaultYaxunitConfig = steps.libraryResource DEFAULT_YAXUNIT_CONFIGURATION_RESOURCE
+            steps.writeFile(options.configPath, defaultYaxunitConfig, 'UTF-8')
+        }
+        def yaxunitConfig = FileUtils.getFilePath(yaxunitConfigPath)
 
-        // Запускаем тесты
-        String command = "$vrunnerPath run --command RunUnitTests=$pathToConfig $ibConnection"
+        // Команда запуска тестов
+        String runTestsCommand = "$vrunnerPath run --command RunUnitTests=$yaxunitConfig $ibConnection"
 
+        // Переопределяем настройки vrunner
         String vrunnerSettings = options.vrunnerSettings
         if (steps.fileExists(vrunnerSettings)) {
-            String vrunnerSettingsCommand = " --settings $vrunnerSettings"
+            String vrunnerSettingsParam = " --settings $vrunnerSettings"
 
-            command += vrunnerSettingsCommand
-            loadYaxunitCommand += vrunnerSettingsCommand
-            loadTestsCommand += vrunnerSettingsCommand
+            runTestsCommand += vrunnerSettingsParam
+
         }
 
+        // Выполяем команды
         steps.withEnv(logosConfig) {
-            VRunner.exec(loadYaxunitCommand, true)
-            VRunner.exec(loadTestsCommand, true)
-            VRunner.exec(command, true)
+            VRunner.exec(runTestsCommand, true)
         }
 
         // Сохраняем результаты
-        steps.junit("$junitReportDir/*.xml", true)
-        steps.archiveArtifacts("$junitReportDir/**")
+        String junitReport = "./build/out/yaxunit/junit.xml"
+        FilePath pathToJUnitReport = FileUtils.getFilePath("$env.WORKSPACE/$junitReport")
+        String junitReportDir = FileUtils.getLocalPath(pathToJUnitReport.getParent())
 
+        if (options.publishToJUnitReport) {
+            steps.junit("$junitReportDir/*.xml", true)
+            steps.archiveArtifacts("$junitReportDir/**")
+        }
+
+        if (options.publishToAllureReport) {
+            String allureReport = "./build/out/allure/yaxunit/junit.xml"
+            FilePath pathToAllureReport = FileUtils.getFilePath("$env.WORKSPACE/$allureReport")
+            String allureReportDir = FileUtils.getLocalPath(pathToAllureReport.getParent())
+
+            pathToJUnitReport.copyTo(pathToAllureReport)
+
+            steps.stash(YAXUNIT_ALLURE_STASH, "$allureReportDir/**", true)
+        }
     }
 }

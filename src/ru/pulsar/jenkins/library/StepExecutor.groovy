@@ -43,6 +43,11 @@ class StepExecutor implements IStepExecutor {
     }
 
     @Override
+    void writeFile(String file, String text, String encoding = 'UTF-8') {
+        steps.writeFile encoding: encoding, file: file, text: text
+    }
+
+    @Override
     boolean fileExists(String file) {
         steps.fileExists file
     }
@@ -152,6 +157,11 @@ class StepExecutor implements IStepExecutor {
     @Override
     def unstash(String name) {
         steps.unstash name
+    }
+
+    @Override
+    def unstable(String message) {
+        steps.unstable message
     }
 
     @Override

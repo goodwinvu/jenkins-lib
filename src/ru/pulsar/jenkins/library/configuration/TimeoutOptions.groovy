@@ -56,11 +56,6 @@ class TimeoutOptions implements Serializable {
     ''')
     Integer bdd
     
-    @JsonPropertyDescription('''Таймаут шага Юнит тестов, в минутах.
-    По умолчанию содержит значение 240.
-    ''')
-    Integer yaxunit
-
     @JsonPropertyDescription('''Таймаут шага синтаксического контроля, в минутах.
     По умолчанию содержит значение 240.
     ''')

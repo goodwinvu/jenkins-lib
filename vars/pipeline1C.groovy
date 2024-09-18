@@ -23,6 +23,8 @@ void call() {
 
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
+            gitLabConnection(config.gitlabInstanceName)
+            copyArtifactPermission('*')
             timestamps()
         }
 
@@ -38,6 +40,7 @@ void call() {
 
                 steps {
                     script {
+                        updateGitlabCommitStatus name: 'build', state: 'running'
                         config = jobConfiguration() as JobConfiguration
                         agent1C = config.v8AgentLabel()
                         agentEdt = config.edtAgentLabel()
@@ -145,6 +148,16 @@ void call() {
                                                 printLocation()
 
                                                 zipInfobase()
+                                                                                                
+                                                script {
+                                                    if (config.saveCFtoArtifacts) {
+                                                        steps.archiveArtifacts("build/out/conf.cf")
+                                                        
+                                                        config.initInfoBaseOptions.extensions.each {
+                                                            steps.archiveArtifacts("build/out/cfe/${it.name}.cfe")
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -348,6 +361,18 @@ void call() {
         }
 
         post('post-stage') {
+            failure {
+                updateGitlabCommitStatus name: 'build', state: 'failed'
+            }
+            unstable {
+                updateGitlabCommitStatus name: 'build', state: 'failed'
+            }
+            success {
+                updateGitlabCommitStatus name: 'build', state: 'success'
+            }
+            aborted {
+                updateGitlabCommitStatus name: 'build', state: 'canceled'
+            }
             always {
                 node('agent') {
                     saveResults config

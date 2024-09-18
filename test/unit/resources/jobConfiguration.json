@@ -4,6 +4,8 @@
   "secrets": {
     "storage": "1234"
   },
+  "saveCFtoArtifacts": false,
+  "gitlabInstanceName":"GitLabServer",
   "stages": {
     "syntaxCheck": true
   },

@@ -20,12 +20,16 @@ void call() {
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
-
-        options {
-            buildDiscarder(logRotator(numToKeepStr: '30'))
-            gitLabConnection(config.gitlabInstanceName)
-            copyArtifactPermission('*')
-            timestamps()
+        
+        environment { 
+            config = jobConfiguration() as JobConfiguration
+        }
+        
+        options {             
+                buildDiscarder(logRotator(numToKeepStr: '30'))
+                gitLabConnection(config.gitlabInstanceName)
+                copyArtifactPermission('*')
+                timestamps()
         }
 
         stages {
@@ -41,7 +45,6 @@ void call() {
                 steps {
                     script {
                         updateGitlabCommitStatus name: 'build', state: 'running'
-                        config = jobConfiguration() as JobConfiguration
                         agent1C = config.v8AgentLabel()
                         agentEdt = config.edtAgentLabel()
                         RepoUtils.computeRepoSlug(env.GIT_URL)

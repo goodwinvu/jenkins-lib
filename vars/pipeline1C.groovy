@@ -15,6 +15,12 @@ String agent1C
 @Field
 String agentEdt
 
+@Field
+Boolean useGitLabIntegration
+
+@Field
+Boolean useCopyArtifactPlugin
+
 void call() {
 
     //noinspection GroovyAssignabilityCheck
@@ -22,14 +28,24 @@ void call() {
         agent none
         
         environment { 
-            config = jobConfiguration() as JobConfiguration
+            script{
+                config = jobConfiguration() as JobConfiguration
+                useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
+                useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
+            }
         }
-        
-        options {             
-                buildDiscarder(logRotator(numToKeepStr: '30'))
-                gitLabConnection(config.gitlabInstanceName)
-                copyArtifactPermission('*')
-                timestamps()
+
+        options {
+            buildDiscarder(logRotator(numToKeepStr: '30'))
+            timestamps()
+            script{     
+                if (useGitLabIntegration){
+                    gitLabConnection(config.gitlabInstanceName)
+                }
+                if (useCopyArtifactPlugin){
+                    copyArtifactPermission('*')
+                }                
+            }
         }
 
         stages {
@@ -44,7 +60,9 @@ void call() {
 
                 steps {
                     script {
-                        updateGitlabCommitStatus name: 'build', state: 'running'
+                        if (useGitLabIntegration){
+                            updateGitlabCommitStatus name: 'build', state: 'running'
+                        }
                         agent1C = config.v8AgentLabel()
                         agentEdt = config.edtAgentLabel()
                         RepoUtils.computeRepoSlug(env.GIT_URL)
@@ -365,16 +383,24 @@ void call() {
 
         post('post-stage') {
             failure {
-                updateGitlabCommitStatus name: 'build', state: 'failed'
+                if (useGitLabIntegration){
+                    updateGitlabCommitStatus name: 'build', state: 'failed'
+                }     
             }
             unstable {
-                updateGitlabCommitStatus name: 'build', state: 'failed'
+                if (useGitLabIntegration){
+                    updateGitlabCommitStatus name: 'build', state: 'failed'
+                }
             }
             success {
-                updateGitlabCommitStatus name: 'build', state: 'success'
+                if (useGitLabIntegration){
+                    updateGitlabCommitStatus name: 'build', state: 'success'
+                }  
             }
             aborted {
-                updateGitlabCommitStatus name: 'build', state: 'canceled'
+                if (useGitLabIntegration){
+                    updateGitlabCommitStatus name: 'build', state: 'canceled'
+                }
             }
             always {
                 node('agent') {

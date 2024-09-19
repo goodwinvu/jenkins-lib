@@ -22,30 +22,19 @@ Boolean useGitLabIntegration
 Boolean useCopyArtifactPlugin
 
 void call() {
-
+    config = jobConfiguration() as JobConfiguration
+    useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
+    useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
+    if (useGitLabIntegration) gitLabConnection(config.gitlabInstanceName)
+    if (useCopyArtifactPlugin) copyArtifactPermission('*') 
+    
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
         
-        environment { 
-            script{
-                config = jobConfiguration() as JobConfiguration
-                useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
-                useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
-            }
-        }
-
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
-            timestamps()
-            script{     
-                if (useGitLabIntegration){
-                    gitLabConnection(config.gitlabInstanceName)
-                }
-                if (useCopyArtifactPlugin){
-                    copyArtifactPermission('*')
-                }                
-            }
+            timestamps()               
         }
 
         stages {
@@ -383,23 +372,23 @@ void call() {
 
         post('post-stage') {
             failure {
-                if (useGitLabIntegration){
-                    updateGitlabCommitStatus name: 'build', state: 'failed'
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'failed'
                 }     
             }
             unstable {
-                if (useGitLabIntegration){
-                    updateGitlabCommitStatus name: 'build', state: 'failed'
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'failed'
                 }
             }
             success {
-                if (useGitLabIntegration){
-                    updateGitlabCommitStatus name: 'build', state: 'success'
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'success'
                 }  
             }
             aborted {
-                if (useGitLabIntegration){
-                    updateGitlabCommitStatus name: 'build', state: 'canceled'
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'canceled'
                 }
             }
             always {

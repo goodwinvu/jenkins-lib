@@ -39,8 +39,11 @@ class JobConfiguration implements Serializable {
     @JsonPropertyDescription("Сохранение конфигурации ИБ (cf и cft) в артефакты сборки")
     Boolean saveCFtoArtifacts
     
-    @JsonPropertyDescription("Имя GitLab сервера в Jenkins, для передачи статусов сборок.")
+    @JsonPropertyDescription("Имя GitLab сервера в настройках Jenkins, для передачи статусов сборок.")
     String gitlabInstanceName
+    
+    @JsonPropertyDescription("Названия сборок, которые будут иметь доступ к артефактам с помощью плагина Copy Artifact. По умолчанию, разрешено для всех - *")
+    String permissionArtifacts
     
     @JsonProperty("initInfobase")
     @JsonPropertyDescription("Настройки шага инициализации ИБ")
@@ -90,7 +93,9 @@ class JobConfiguration implements Serializable {
             ", timeoutOptions=" + timeoutOptions +
             ", defaultBranch='" + defaultBranch + '\'' +
             ", secrets=" + secrets +
-            ", saveCFtoArtifacts=" + saveCFtoArtifacts +
+            ", saveCFtoArtifacts='" + saveCFtoArtifacts + '\'' +
+            ", gitlabInstanceName='" + gitlabInstanceName + '\'' +
+            ", permissionArtifacts='" + permissionArtifacts + '\'' +
             ", initInfoBaseOptions=" + initInfoBaseOptions +
             ", bddOptions=" + bddOptions +
             ", sonarQubeOptions=" + sonarQubeOptions +

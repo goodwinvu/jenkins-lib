@@ -13,6 +13,7 @@
   },
   "saveCFtoArtifacts": false,
   "gitlabInstanceName":"",
+  "permissionArtifacts":"*",
   "stages": {
     "initSteps": false,
     "sonarqube": false,

@@ -47,7 +47,7 @@ void call() {
                         useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
                         useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
                         if (useGitLabIntegration) gitLabConnection(config.gitlabInstanceName)
-                        if (useCopyArtifactPlugin) copyArtifactPermission('*') 
+                        if (useCopyArtifactPlugin) copyArtifactPermission(config.permissionArtifacts) 
                         if (useGitLabIntegration){
                             updateGitlabCommitStatus name: 'build', state: 'running'
                         }

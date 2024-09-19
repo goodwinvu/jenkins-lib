@@ -56,7 +56,6 @@ class FileUtils {
             localPathToFile.copyFrom(localFilePath)
         }
     }
-
     private static boolean isValidUrl(String url) {
         try {
             new URL(url).toURI()

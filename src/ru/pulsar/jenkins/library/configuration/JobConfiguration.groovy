@@ -6,9 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import ru.pulsar.jenkins.library.IStepExecutor
 import ru.pulsar.jenkins.library.ioc.ContextRegistry
+import ru.pulsar.jenkins.library.utils.FileUtils
+import groovy.io.FileType
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class JobConfiguration implements Serializable {
+
     @JsonPropertyDescription("Версия платформы 1С:Предприятие в формате 8.3.хх.хххх.")
     String v8version
 
@@ -36,12 +39,22 @@ class JobConfiguration implements Serializable {
     @JsonPropertyDescription("Идентификаторы сохраненных секретов")
     Secrets secrets
 
+    @JsonProperty("saveCFtoArtifacts")
     @JsonPropertyDescription("Сохранение конфигурации ИБ (cf и cft) в артефакты сборки")
     Boolean saveCFtoArtifacts
     
-    @JsonPropertyDescription("Имя GitLab сервера в Jenkins, для передачи статусов сборок.")
+    @JsonProperty("gitlabInstanceName")
+    @JsonPropertyDescription("Имя GitLab сервера в настройках Jenkins, для передачи статусов сборок.")
     String gitlabInstanceName
     
+    @JsonProperty("permissionArtifacts")
+    @JsonPropertyDescription("Названия сборок, которые будут иметь доступ к артефактам с помощью плагина Copy Artifact. По умолчанию, разрешено для всех - *")
+    String permissionArtifacts
+    
+    @JsonProperty("pathEDTCliDef")
+    @JsonPropertyDescription("Путь для поиска 1cedtcli по умолчанию - /opt/1C/1CE/components/")
+    String pathEDTCliDef
+
     @JsonProperty("initInfobase")
     @JsonPropertyDescription("Настройки шага инициализации ИБ")
     InitInfoBaseOptions initInfoBaseOptions
@@ -90,7 +103,10 @@ class JobConfiguration implements Serializable {
             ", timeoutOptions=" + timeoutOptions +
             ", defaultBranch='" + defaultBranch + '\'' +
             ", secrets=" + secrets +
-            ", saveCFtoArtifacts=" + saveCFtoArtifacts +
+            ", saveCFtoArtifacts='" + saveCFtoArtifacts + '\'' +
+            ", gitlabInstanceName='" + gitlabInstanceName + '\'' +
+            ", permissionArtifacts='" + permissionArtifacts + '\'' +
+            ", pathEDTCliDef='" + pathEDTCliDef + '\'' +
             ", initInfoBaseOptions=" + initInfoBaseOptions +
             ", bddOptions=" + bddOptions +
             ", sonarQubeOptions=" + sonarQubeOptions +
@@ -131,11 +147,38 @@ class JobConfiguration implements Serializable {
         return v8version
     }
 
+    Boolean useGitLabIntegration() {
+        if (gitlabInstanceName.isEmpty()) {
+            return false
+        }else{
+            return (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
+        }  
+    }
+
+    Boolean useCopyArtifactPlugin() {
+        if (saveCFtoArtifacts!=true) {
+            return false
+        }else{
+            return (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
+        }
+    }
+
     String edtAgentLabel() {
         String edtVersionForRing = "edt"
         if (edtVersion != '') {
             edtVersionForRing += "@" + edtVersion
         }
         return edtVersionForRing
+    }
+
+    Boolean useEDTCli() {
+        return edtVersion.contains("2024")
+    }
+
+    @NonCPS
+    String getEDTPath() {
+        
+        return pathEDTCliDef
+          
     }
 }

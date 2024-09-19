@@ -47,45 +47,49 @@ class EdtToDesignerFormatTransformation implements Serializable {
 
 
         String extensionRoot = FileUtils.getFilePath("$env.WORKSPACE/$EXTENSION_DIR").getRemote()
-        def edtVersionForRing = EDT.ringModule(config)
-
         steps.deleteDir(workspaceDir)
+        def edtVersionForRing = EDT.ringModule(config)
+        def useCli = EDT.useEDTCli(config)
+        def pathEDT = EDT.getEDTPath(config)
 
-        transformConfiguration(steps, projectDir, projectWorkspaceDir, configurationRoot, edtVersionForRing)
-        transformExtensions(steps, workspaceDir, extensionRoot, edtVersionForRing)
+        transformConfiguration(steps, projectDir, projectWorkspaceDir, configurationRoot, edtVersionForRing, useCli, pathEDT)
+        transformExtensions(steps, workspaceDir, extensionRoot, edtVersionForRing, useCli, pathEDT)
+ 
     }
 
-    private void transformConfiguration(IStepExecutor steps, String projectDir, String projectWorkspaceDir, String configurationRoot, String edtVersionForRing) {
-
+    private void transformConfiguration(IStepExecutor steps, String projectDir, String projectWorkspaceDir, String configurationRoot, String edtVersionForRing, Boolean useCli, String pathEDT) {
+        String edtCommand = ''
         Logger.println("Конвертация исходников конфигурации из формата EDT в формат Конфигуратора")
         steps.deleteDir(configurationRoot)
-
-        def ringCommand = "ring $edtVersionForRing workspace export --workspace-location \"$projectWorkspaceDir\" --project \"$projectDir\" --configuration-files \"$configurationRoot\""
-
-        steps.ringCommand(ringCommand)
-
+        if (useCli) {       
+            edtCommand = "$pathEDT/1cedtcli -data \"$projectWorkspaceDir\" -timeout 5400 -vmargs -Xmx8g -command export --project \"$projectDir\" --configuration-files \"$configurationRoot\""
+        }else{
+            edtCommand = "ring $edtVersionForRing workspace export --workspace-location \"$projectWorkspaceDir\" --project \"$projectDir\" --configuration-files \"$configurationRoot\""
+        }
+        steps.ringCommand(edtCommand)
         steps.zip(CONFIGURATION_DIR, CONFIGURATION_ZIP)
         steps.stash(CONFIGURATION_ZIP_STASH, CONFIGURATION_ZIP)
     }
 
-    private void transformExtensions(IStepExecutor steps, String workspaceDir, String extensionRoot, String edtVersionForRing) {
+    private void transformExtensions(IStepExecutor steps, String workspaceDir, String extensionRoot, String edtVersionForRing, Boolean useCli, String pathEDT) {
+        String edtCommand = ''
         steps.deleteDir(extensionRoot)
 
         config.initInfoBaseOptions.extensions.each {
-
             if (it.initMethod != InitExtensionMethod.SOURCE) {
                 return
             }
-
             Logger.println("Конвертация исходников расширения ${it.name} из формата EDT в формат Конфигуратора")
-
             def env = steps.env();
             def projectDir = FileUtils.getFilePath("$env.WORKSPACE/${it.path}")
             def currentExtensionWorkspaceDir = FileUtils.getFilePath("$workspaceDir/cfe/${it.name}")
-
-            def ringCommand = "ring $edtVersionForRing workspace export --workspace-location \"$currentExtensionWorkspaceDir\" --project \"$projectDir\" --configuration-files \"$extensionRoot/${it.name}\""
-
-            steps.ringCommand(ringCommand)
+            if (useCli) {      
+                edtCommand = "$pathEDT/1cedtcli -data \"$currentExtensionWorkspaceDir\" -vmargs -Xmx8g -command export --project \"$projectDir\" --configuration-files \"$extensionRoot/${it.name}\""
+            }else{
+                edtCommand = "ring $edtVersionForRing workspace export --workspace-location \"$currentExtensionWorkspaceDir\" --project \"$projectDir\" --configuration-files \"$extensionRoot/${it.name}\""
+            }
+            
+            steps.ringCommand(edtCommand)
         }
         steps.zip(EXTENSION_DIR, EXTENSION_ZIP)
         steps.stash(EXTENSION_ZIP_STASH, EXTENSION_ZIP)

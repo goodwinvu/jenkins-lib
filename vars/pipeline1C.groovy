@@ -25,12 +25,12 @@ void call() {
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
-        
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
+            gitLabConnection('GitLabServer')
+            copyArtifactPermission('*') 
             timestamps()               
         }
-
         stages {
 
             stage('pre-stage') {
@@ -44,10 +44,7 @@ void call() {
                 steps {
                     script {
                         config = jobConfiguration() as JobConfiguration
-                        useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
-                        useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
-                        if (useGitLabIntegration) gitLabConnection(config.gitlabInstanceName)
-                        if (useCopyArtifactPlugin) copyArtifactPermission('*') 
+                        useGitLabIntegration = config.useGitLabIntegration()
                         if (useGitLabIntegration){
                             updateGitlabCommitStatus name: 'build', state: 'running'
                         }

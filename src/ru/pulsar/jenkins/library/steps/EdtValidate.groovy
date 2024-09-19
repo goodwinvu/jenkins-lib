@@ -11,7 +11,7 @@ import ru.pulsar.jenkins.library.utils.Logger
 class EdtValidate implements Serializable {
 
     public static final String RESULT_STASH = 'edt-validate'
-    public static final String RESULT_FILE = 'build/out/edt-validate.out'
+    public static final String RESULT_FILE = 'build/out/edt-validate.tsv'
 
     private final JobConfiguration config
 
@@ -33,7 +33,8 @@ class EdtValidate implements Serializable {
 
         String workspaceLocation = "$env.WORKSPACE/$DesignerToEdtFormatTransformation.WORKSPACE"
         String projectList
-
+        String edtCommand = ''
+        
         if (config.sourceFormat == SourceFormat.DESIGNER) {
             steps.unstash(DesignerToEdtFormatTransformation.WORKSPACE_ZIP_STASH)
             steps.unzip(DesignerToEdtFormatTransformation.WORKSPACE, DesignerToEdtFormatTransformation.WORKSPACE_ZIP)
@@ -54,10 +55,15 @@ class EdtValidate implements Serializable {
         def edtVersionForRing = EDT.ringModule(config)
 
         Logger.println("Выполнение валидации EDT")
-
-        def ringCommand = "ring $edtVersionForRing workspace validate --workspace-location \"$workspaceLocation\" --file \"$resultFile\" $projectList"
+        def useCli = EDT.useEDTCli(config)
+        if (useCli) {       
+            def pathEDT = EDT.getEDTPath(config)
+            edtCommand = "$pathEDT/1cedtcli -data \"$workspaceLocation\" -vmargs -Xmx8g -command validate --file \"$resultFile\" $projectList"
+        }else{
+            edtCommand = "ring $edtVersionForRing workspace validate --workspace-location \"$workspaceLocation\" --file \"$resultFile\" $projectList"
+        }
         steps.catchError {
-            steps.ringCommand(ringCommand)
+            steps.ringCommand(edtCommand)
         }
 
         steps.archiveArtifacts("$DesignerToEdtFormatTransformation.WORKSPACE/.metadata/.log")

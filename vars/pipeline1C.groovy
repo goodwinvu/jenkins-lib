@@ -22,12 +22,6 @@ Boolean useGitLabIntegration
 Boolean useCopyArtifactPlugin
 
 void call() {
-    config = jobConfiguration() as JobConfiguration
-    useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
-    useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
-    if (useGitLabIntegration) gitLabConnection(config.gitlabInstanceName)
-    if (useCopyArtifactPlugin) copyArtifactPermission('*') 
-    
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
@@ -49,6 +43,11 @@ void call() {
 
                 steps {
                     script {
+                        config = jobConfiguration() as JobConfiguration
+                        useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
+                        useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
+                        if (useGitLabIntegration) gitLabConnection(config.gitlabInstanceName)
+                        if (useCopyArtifactPlugin) copyArtifactPermission('*') 
                         if (useGitLabIntegration){
                             updateGitlabCommitStatus name: 'build', state: 'running'
                         }

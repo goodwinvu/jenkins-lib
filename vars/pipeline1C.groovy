@@ -15,15 +15,20 @@ String agent1C
 @Field
 String agentEdt
 
-void call() {
+@Field
+Boolean useGitLabIntegration
 
+@Field
+Boolean useCopyArtifactPlugin
+
+void call() {
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
-
+        
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
-            timestamps()
+            timestamps()               
         }
 
         stages {
@@ -39,6 +44,13 @@ void call() {
                 steps {
                     script {
                         config = jobConfiguration() as JobConfiguration
+                        useGitLabIntegration = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
+                        useCopyArtifactPlugin = (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
+                        if (useGitLabIntegration) gitLabConnection(config.gitlabInstanceName)
+                        if (useCopyArtifactPlugin) copyArtifactPermission('*') 
+                        if (useGitLabIntegration){
+                            updateGitlabCommitStatus name: 'build', state: 'running'
+                        }
                         agent1C = config.v8AgentLabel()
                         agentEdt = config.edtAgentLabel()
                         RepoUtils.computeRepoSlug(env.GIT_URL)
@@ -145,6 +157,16 @@ void call() {
                                                 printLocation()
 
                                                 zipInfobase()
+                                                                                                
+                                                script {
+                                                    if (config.saveCFtoArtifacts) {
+                                                        steps.archiveArtifacts("build/out/conf.cf")
+                                                        
+                                                        config.initInfoBaseOptions.extensions.each {
+                                                            steps.archiveArtifacts("build/out/cfe/${it.name}.cfe")
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -348,6 +370,26 @@ void call() {
         }
 
         post('post-stage') {
+            failure {
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'failed'
+                }     
+            }
+            unstable {
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'failed'
+                }
+            }
+            success {
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'success'
+                }  
+            }
+            aborted {
+                script{
+                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'canceled'
+                }
+            }
             always {
                 node('agent') {
                     saveResults config

@@ -11,6 +11,8 @@
     "telegramBotToken": "UNKNOWN_ID",
     "telegramChatId": "UNKNOWN_ID"
   },
+  "saveCFtoArtifacts": false,
+  "gitlabInstanceName":"",
   "stages": {
     "initSteps": false,
     "sonarqube": false,

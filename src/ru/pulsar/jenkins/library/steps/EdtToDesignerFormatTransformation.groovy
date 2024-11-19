@@ -38,8 +38,7 @@ class EdtToDesignerFormatTransformation implements Serializable {
 
         String workspaceDir = FileUtils.getFilePath("$env.WORKSPACE/$WORKSPACE").getRemote()
         steps.deleteDir(workspaceDir)
-        def edtVersionForRing = EDT.ringModule(config)
-
+   
         def engine = EdtCliEngineFactory.getEngine(config.edtVersion)
 
         engine.edtToDesignerTransformConfiguration(steps, config)

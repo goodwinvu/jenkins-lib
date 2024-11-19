@@ -16,9 +16,6 @@ String agent1C
 String agentEdt
 
 @Field
-Boolean useGitLabIntegration
-
-@Field
 Boolean useCopyArtifactPlugin
 
 void call() {
@@ -27,8 +24,6 @@ void call() {
         agent none
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
-            gitLabConnection('GitLabServer')
-            copyArtifactPermission('*') 
             timestamps()               
         }
         stages {
@@ -44,10 +39,6 @@ void call() {
                 steps {
                     script {
                         config = jobConfiguration() as JobConfiguration
-                        useGitLabIntegration = config.useGitLabIntegration()
-                        if (useGitLabIntegration){
-                            updateGitlabCommitStatus name: 'build', state: 'running'
-                        }
                         agent1C = config.v8AgentLabel()
                         agentEdt = config.edtAgentLabel()
                         RepoUtils.computeRepoSlug(env.GIT_URL)
@@ -367,26 +358,6 @@ void call() {
         }
 
         post('post-stage') {
-            failure {
-                script{
-                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'failed'
-                }     
-            }
-            unstable {
-                script{
-                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'failed'
-                }
-            }
-            success {
-                script{
-                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'success'
-                }  
-            }
-            aborted {
-                script{
-                    if (useGitLabIntegration) updateGitlabCommitStatus name: 'build', state: 'canceled'
-                }
-            }
             always {
                 node('agent') {
                     saveResults config

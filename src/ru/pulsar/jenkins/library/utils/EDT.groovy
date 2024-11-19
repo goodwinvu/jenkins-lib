@@ -14,11 +14,4 @@ final class EDT {
         return config.edtAgentLabel()
     }
 
-    static Boolean useEDTCli(JobConfiguration config) {
-        return config.useEDTCli()
-    }
-
-    static String getEDTPath(JobConfiguration config) {
-        return config.getEDTPath()
-    }
 }

@@ -6,12 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import ru.pulsar.jenkins.library.IStepExecutor
 import ru.pulsar.jenkins.library.ioc.ContextRegistry
-import ru.pulsar.jenkins.library.utils.FileUtils
-import groovy.io.FileType
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class JobConfiguration implements Serializable {
-
     @JsonPropertyDescription("Версия платформы 1С:Предприятие в формате 8.3.хх.хххх.")
     String v8version
 
@@ -46,15 +43,9 @@ class JobConfiguration implements Serializable {
     @JsonProperty("gitlabInstanceName")
     @JsonPropertyDescription("Имя GitLab сервера в настройках Jenkins, для передачи статусов сборок.")
     String gitlabInstanceName
-    
     @JsonProperty("permissionArtifacts")
     @JsonPropertyDescription("Названия сборок, которые будут иметь доступ к артефактам с помощью плагина Copy Artifact. По умолчанию, разрешено для всех - *")
-    String permissionArtifacts
-    
-    @JsonProperty("pathEDTCliDef")
-    @JsonPropertyDescription("Путь для поиска 1cedtcli по умолчанию - /opt/1C/1CE/components/")
-    String pathEDTCliDef
-
+    String permissionArtifacts    
     @JsonProperty("initInfobase")
     @JsonPropertyDescription("Настройки шага инициализации ИБ")
     InitInfoBaseOptions initInfoBaseOptions
@@ -106,7 +97,6 @@ class JobConfiguration implements Serializable {
             ", saveCFtoArtifacts='" + saveCFtoArtifacts + '\'' +
             ", gitlabInstanceName='" + gitlabInstanceName + '\'' +
             ", permissionArtifacts='" + permissionArtifacts + '\'' +
-            ", pathEDTCliDef='" + pathEDTCliDef + '\'' +
             ", initInfoBaseOptions=" + initInfoBaseOptions +
             ", bddOptions=" + bddOptions +
             ", sonarQubeOptions=" + sonarQubeOptions +
@@ -169,16 +159,5 @@ class JobConfiguration implements Serializable {
             edtVersionForRing += "@" + edtVersion
         }
         return edtVersionForRing
-    }
-
-    Boolean useEDTCli() {
-        return edtVersion.contains("2024")
-    }
-
-    @NonCPS
-    String getEDTPath() {
-        
-        return pathEDTCliDef
-          
     }
 }

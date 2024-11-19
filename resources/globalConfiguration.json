@@ -13,7 +13,6 @@
   },
   "gitlabInstanceName":"GitLabServer",
   "permissionArtifacts":"*",
-  "pathEDTCliDef":"/opt/1C/1CE/components/",
   "stages": {
     "initSteps": false,
     "sonarqube": false,

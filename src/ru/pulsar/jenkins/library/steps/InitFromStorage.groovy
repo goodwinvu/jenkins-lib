@@ -65,6 +65,12 @@ class InitFromStorage implements Serializable {
             }
 
             VRunner.exec(command)
+
+            if (config.saveCFtoArtifacts) {
+                Logger.println("Подготовка cf для сохранения в артефакты сборки")
+                def compileToCfCommand = "$vrunnerPath unload --ibconnection \"/F./build/ib\" $env.WORKSPACE/build/out/conf.cf"
+                VRunner.exec(compileToCfCommand)
+            }
         }
     }
 

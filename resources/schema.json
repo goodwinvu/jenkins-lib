@@ -279,6 +279,18 @@
       },
       "description" : "Идентификаторы сохраненных секретов"
     },
+    "saveCFtoArtifacts" : {
+      "type" : "boolean",
+      "description" : "Сохранять cf и cfe в виде артефактов сборки."
+    },
+    "gitlabInstanceName" : {
+      "type" : "string",
+      "description" : "Имя сервера GitLab в настройках Jenkins."
+    },
+    "permissionArtifacts" : {
+      "type" : "string",
+      "description" : "Имена задач jenkins (jobs), которые будут иметь доступ к артефактам с помощью плагина Copy Artifact.\n    По умолчанию, разрешено для всех - *\n    "
+    },
     "smoke" : {
       "type" : "object",
       "properties" : {

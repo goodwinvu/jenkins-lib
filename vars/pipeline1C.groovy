@@ -15,17 +15,17 @@ String agent1C
 @Field
 String agentEdt
 
-void call() {
+@Field
+Boolean useCopyArtifactPlugin
 
+void call() {
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
-
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
-            timestamps()
+            timestamps()               
         }
-
         stages {
 
             stage('pre-stage') {
@@ -145,6 +145,15 @@ void call() {
                                                 printLocation()
 
                                                 zipInfobase config, 'initInfoBase'
+                                                script {
+                                                    if (config.saveCFtoArtifacts) {
+                                                        steps.archiveArtifacts("build/out/conf.cf")
+                                                        
+                                                        config.initInfoBaseOptions.extensions.each {
+                                                            steps.archiveArtifacts("build/out/cfe/${it.name}.cfe")
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }

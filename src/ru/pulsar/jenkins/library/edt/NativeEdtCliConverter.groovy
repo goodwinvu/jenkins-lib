@@ -19,8 +19,7 @@ class NativeEdtCliConverter implements IEdtCliEngine {
 
         String workspaceDir = FileUtils.getFilePath("$env.WORKSPACE/$EdtToDesignerFormatTransformation.WORKSPACE").getRemote()
         String projectWorkspaceDir = FileUtils.getFilePath("$workspaceDir/cf").getRemote()
-        String projectDir = FileUtils.getFilePath("$env.WORKSPACE/$srcDir").getRemote()
-
+        
         def configurationRoot = FileUtils.getFilePath("$env.WORKSPACE/$EdtToDesignerFormatTransformation.CONFIGURATION_DIR")
         String configurationRootFullPath = configurationRoot.getRemote()
 

@@ -32,8 +32,7 @@ class EdtValidate implements Serializable {
         def env = steps.env()
 
         String projectList
-        String edtCommand = ''
-        
+
         if (config.sourceFormat == SourceFormat.DESIGNER) {
             steps.unstash(DesignerToEdtFormatTransformation.WORKSPACE_ZIP_STASH)
             steps.unzip(DesignerToEdtFormatTransformation.WORKSPACE, DesignerToEdtFormatTransformation.WORKSPACE_ZIP)

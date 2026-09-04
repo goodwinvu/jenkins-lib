@@ -33,7 +33,7 @@ class ConfigurationReaderTest {
 
     // then
     assertThat(jobConfiguration.getV8version()).isEqualTo("8.3.14.1944");
-    assertThat(jobConfiguration.getEdtVersion()).isEqualTo("2021.3.4:x86_64");    
+    assertThat(jobConfiguration.getEdtVersion()).isEqualTo("2021.3.4:x86_64");
 
     assertThat(jobConfiguration.getSonarQubeOptions().getSonarScannerToolName()).isEqualTo("sonar-scanner");
     assertThat(jobConfiguration.getSonarQubeOptions().getSonarQubeInstallation()).isEqualTo("qa");
@@ -85,8 +85,11 @@ class ConfigurationReaderTest {
     assertThat(jobConfiguration.getNotificationsOptions().getEmailNotificationOptions().getFailureEmailOptions().getDirectRecipients()).isEmpty();
     assertThat(jobConfiguration.getNotificationsOptions().getEmailNotificationOptions().getFailureEmailOptions().getRecipientProviders()).hasSize(1);
 
-    assertThat(jobConfiguration.getNotificationsOptions().getTelegramNotificationOptions().getOnAlways()).isFalse();
-    assertThat(jobConfiguration.getNotificationsOptions().getTelegramNotificationOptions().getOnFailure()).isTrue();
+    assertThat(jobConfiguration.getNotificationsOptions().getImNotificationOptions().get("telegram").getOnAlways()).isFalse();
+    assertThat(jobConfiguration.getNotificationsOptions().getImNotificationOptions().get("telegram").getOnFailure()).isTrue();
+
+    assertThat(jobConfiguration.getNotificationsOptions().getImNotificationOptions().get("max").getOnAlways()).isFalse();
+    assertThat(jobConfiguration.getNotificationsOptions().getImNotificationOptions().get("max").getOnFailure()).isTrue();
   }
 
   @Test

@@ -22,13 +22,16 @@ Boolean isInfobaseInitialized = true
 Boolean useCopyArtifactPlugin
 
 void call() {
+
     //noinspection GroovyAssignabilityCheck
     pipeline {
         agent none
+
         options {
             buildDiscarder(logRotator(numToKeepStr: '30'))
-            timestamps()               
+            timestamps()
         }
+
         stages {
 
             stage('pre-stage') {

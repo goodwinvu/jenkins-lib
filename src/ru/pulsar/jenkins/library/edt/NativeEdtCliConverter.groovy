@@ -19,7 +19,6 @@ class NativeEdtCliConverter implements IEdtCliEngine {
 
         String workspaceDir = FileUtils.getFilePath("$env.WORKSPACE/$EdtToDesignerFormatTransformation.WORKSPACE").getRemote()
         String projectWorkspaceDir = FileUtils.getFilePath("$workspaceDir/cf").getRemote()
-        
         def configurationRoot = FileUtils.getFilePath("$env.WORKSPACE/$EdtToDesignerFormatTransformation.CONFIGURATION_DIR")
         String configurationRootFullPath = configurationRoot.getRemote()
 
@@ -47,7 +46,6 @@ class NativeEdtCliConverter implements IEdtCliEngine {
             if (it.initMethod != InitExtensionMethod.SOURCE) {
                 return
             }
-            
 
             Logger.println("Конвертация исходников расширения ${it.name} из формата EDT в формат Конфигуратора с помощью 1cedtcli")
             def currentExtensionWorkspaceDir = FileUtils.getFilePath("$workspaceDir/cfe/${it.name}")

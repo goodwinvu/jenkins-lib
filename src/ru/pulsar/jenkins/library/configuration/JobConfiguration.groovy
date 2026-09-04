@@ -35,7 +35,6 @@ class JobConfiguration implements Serializable {
 
     @JsonPropertyDescription("Идентификаторы сохраненных секретов")
     Secrets secrets
-
     @JsonProperty("saveCFtoArtifacts")
     @JsonPropertyDescription("Сохранение конфигурации ИБ (cf и cft) в артефакты сборки")
     Boolean saveCFtoArtifacts
@@ -43,9 +42,11 @@ class JobConfiguration implements Serializable {
     @JsonProperty("gitlabInstanceName")
     @JsonPropertyDescription("Имя GitLab сервера в настройках Jenkins, для передачи статусов сборок.")
     String gitlabInstanceName
+    
     @JsonProperty("permissionArtifacts")
     @JsonPropertyDescription("Названия сборок, которые будут иметь доступ к артефактам с помощью плагина Copy Artifact. По умолчанию, разрешено для всех - *")
-    String permissionArtifacts    
+    String permissionArtifacts 
+
     @JsonProperty("initInfobase")
     @JsonPropertyDescription("Настройки шага инициализации ИБ")
     InitInfoBaseOptions initInfoBaseOptions
@@ -98,9 +99,6 @@ class JobConfiguration implements Serializable {
             ", timeoutOptions=" + timeoutOptions +
             ", defaultBranch='" + defaultBranch + '\'' +
             ", secrets=" + secrets +
-            ", saveCFtoArtifacts='" + saveCFtoArtifacts + '\'' +
-            ", gitlabInstanceName='" + gitlabInstanceName + '\'' +
-            ", permissionArtifacts='" + permissionArtifacts + '\'' +
             ", initInfoBaseOptions=" + initInfoBaseOptions +
             ", bddOptions=" + bddOptions +
             ", sonarQubeOptions=" + sonarQubeOptions +
@@ -140,22 +138,6 @@ class JobConfiguration implements Serializable {
 
     String v8AgentLabel() {
         return v8version
-    }
-
-    Boolean useGitLabIntegration() {
-        if (gitlabInstanceName.isEmpty()) {
-            return false
-        }else{
-            return (jenkins.model.Jenkins.instance.pluginManager.getPlugin('gitlab-plugin') != null)
-        }  
-    }
-
-    Boolean useCopyArtifactPlugin() {
-        if (saveCFtoArtifacts!=true) {
-            return false
-        }else{
-            return (jenkins.model.Jenkins.instance.pluginManager.getPlugin('copyartifact') != null)
-        }
     }
 
     String edtAgentLabel() {

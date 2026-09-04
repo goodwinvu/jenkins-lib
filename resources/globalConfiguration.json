@@ -9,7 +9,12 @@
     "storagePath": "UNKNOWN_ID",
     "storage": "UNKNOWN_ID",
     "telegramBotToken": "UNKNOWN_ID",
-    "telegramChatId": "UNKNOWN_ID"
+    "telegramChatId": "UNKNOWN_ID",
+    "maxBotToken": "UNKNOWN_ID",
+    "maxChatId": "UNKNOWN_ID",
+    "discordWebhookUrl": "UNKNOWN_ID",
+    "discordBotToken": "UNKNOWN_ID",
+    "discordChatId": "UNKNOWN_ID"
   },
   "gitlabInstanceName":"GitLabServer",
   "permissionArtifacts":"*",
@@ -22,7 +27,10 @@
     "smoke": false,
     "yaxunit": false,
     "email": false,
-    "telegram": false
+    "telegram": false,
+    "max": false,
+    "discordWebhook": false,
+    "discordBot": false
   },
   "timeout": {
     "smoke": 240,
@@ -161,6 +169,24 @@
       }
     },
     "telegram": {
+      "onAlways": true,
+      "onFailure": false,
+      "onUnstable": false,
+      "onSuccess": false
+    },
+    "max": {
+      "onAlways": true,
+      "onFailure": false,
+      "onUnstable": false,
+      "onSuccess": false
+    },
+    "discordWebhook": {
+      "onAlways": true,
+      "onFailure": false,
+      "onUnstable": false,
+      "onSuccess": false
+    },
+    "discordBot": {
       "onAlways": true,
       "onFailure": false,
       "onUnstable": false,

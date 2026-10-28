@@ -15,6 +15,9 @@ class JobConfiguration implements Serializable {
     @JsonPropertyDescription("Версия модуля 1C:Enterprise Development Tools формате xxxx.x.x:x86_64")
     String edtVersion
 
+    @JsonPropertyDescription("Параметры EDTcli для выполнения операций. Значение по умолчанию - пустая строка")
+    String edtcliParams
+
     @JsonPropertyDescription("Путь к корневому каталогу с исходниками конфигурации, в случае хранения исходников в формате EDT, необходимо указать путь к проекту")
     String srcDir
 
@@ -93,6 +96,7 @@ class JobConfiguration implements Serializable {
         return "JobConfiguration{" +
             "v8version='" + v8version + '\'' +
             ", edtVersion='" + edtVersion + '\'' +
+            ", edtcliParams='" + edtcliParams + '\'' +
             ", srcDir='" + srcDir + '\'' +
             ", sourceFormat=" + sourceFormat +
             ", stageFlags=" + stageFlags +
